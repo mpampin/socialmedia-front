@@ -1,6 +1,8 @@
+import Header from '../components/Header';
+
 const Layout = (props) => {
     return <div>
-        <h1>Welcome</h1>
+        <Header />
         {props.children}
     </div>
 }

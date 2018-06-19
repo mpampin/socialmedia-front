@@ -1,30 +1,33 @@
-import Layout from '../containers/Layout'
-import { HttpLink, InMemoryCache, ApolloClient } from "apollo-boost";
-import { ApolloProvider } from "react-apollo";
-import config from "../../config";
-import fetch from 'isomorphic-unfetch'
-import ListOfPosts from '../containers/ListOfPosts';
+import Layout from '../containers/Layout';
+import ListOfPosts from '../containers/ListOfPostsNew';
+import Search from '../components/Search';
+import withData from '../lib/apollo';
+import { Component } from 'react';
 
-// Polyfill fetch() on the server (used by apollo-client)
-if (!process.browser) {
-  global.fetch = fetch
+class Index extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      interest: ""
+    };
+
+    this.changeInterest = this.changeInterest.bind(this);
+
+  }
+
+  changeInterest(interest) {
+    console.log(interest);
+    this.setState({ interest });
+  }
+
+  render() {
+    return <Layout>
+      <Search onChange={this.changeInterest} />
+      { this.state.interest && <ListOfPosts interest={this.state.interest} /> }
+    </Layout>
+  }
+
 }
 
-const client = new ApolloClient({
-  connectToDevTools: process.browser,
-  ssrMode: !process.browser, // Disables forceFetch on the server (so queries are only run once)
-  link: new HttpLink({
-    uri: config.graphqlServer.url
-  }),
-  cache: new InMemoryCache().restore({})
-});
-
-const Index = () => (
-  <ApolloProvider client={client}>
-    <Layout>
-      <ListOfPosts />
-    </Layout>
-  </ApolloProvider>
-)
-
-export default Index
+export default withData(Index)
