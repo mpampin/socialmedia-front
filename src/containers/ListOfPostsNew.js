@@ -3,31 +3,19 @@ import gql from 'graphql-tag';
 import ErrorMessage from '../components/ErrorMessage';
 import Post from '../components/Post';
 import {
-  Row,
-  Button
+  Row
 } from 'react-materialize';
 
-const POSTS_PER_PAGE = 10
-
 function PostList({
-  data: { loading, error, socialmediaPosts, _socialmediaPostsMeta },
-  loadMorePosts
+  data: { loading, error, socialmediaPosts }
 }) {
   if (error) return <ErrorMessage message="Error cargando el listado de posts." />
-  if (socialmediaPosts && socialmediaPosts.length) {
-    const areMorePosts = socialmediaPosts.length < _socialmediaPostsMeta.count
+  if (!loading) {
     return (
       <div>
-          {allPosts.map((post) => (
+          {socialmediaPosts.map((post) => (
             <Row><Post user={post.user} hashtags={post.hashtags}>{post.message}</Post></Row>
           ))}
-        {areMorePosts ? (
-          <Button onClick={() => loadMorePosts()}>
-            {loading ? 'Cargando...' : 'Mostrar más'}
-          </Button>
-        ) : (
-          ''
-        )}
       </div>
     )
   }
@@ -35,14 +23,11 @@ function PostList({
 } 
 
 const allPosts = gql`
-  query allPosts($interest: String!, $first: Int!, $skip: Int!) {
-    socialmediaPosts(interest: $interest, first: $first, skip: $skip) {
+  query allPosts($interest: String!) {
+    socialmediaPosts(interest: $interest) {
       user
       message
       hashtags
-    }
-    _socialmediaPostsMeta {
-      count
     }
   }
 `
@@ -50,27 +35,7 @@ const allPosts = gql`
 export default graphql(allPosts, {
   options: (ownProps) => ({
     variables: {
-      skip: 0,
-      first: POSTS_PER_PAGE,
       interest: ownProps.interest
-    }
-  }),
-  props: ({ data }) => ({
-    data,
-    loadMorePosts: () => {
-      return data.fetchMore({
-        variables: {
-          skip: data.allPosts.length
-        },
-        updateQuery: (previousResult, { fetchMoreResult }) => {
-          if (!fetchMoreResult) {
-            return previousResult
-          }
-          return Object.assign({}, previousResult, {
-            socialmediaPosts: [...previousResult.socialmediaPosts, ...fetchMoreResult.socialmediaPosts]
-          })
-        }
-      })
     }
   })
 })(PostList)
