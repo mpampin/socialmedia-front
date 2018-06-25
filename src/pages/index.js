@@ -1,5 +1,5 @@
 import Layout from '../containers/Layout';
-import ListOfPosts from '../containers/ListOfPostsNew';
+import ListOfPosts from '../containers/ListOfPosts';
 import Search from '../components/Search';
 import withData from '../lib/apollo';
 import { Component } from 'react';
