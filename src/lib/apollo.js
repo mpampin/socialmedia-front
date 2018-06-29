@@ -1,11 +1,30 @@
-import { withData } from 'next-apollo'
-import { HttpLink } from 'apollo-link-http'
+import {withData} from 'next-apollo';
+import {HttpLink} from 'apollo-link-http';
+import {WebSocketLink} from 'apollo-link-ws';
+import {split} from 'apollo-client-preset';
+import {getMainDefinition} from 'apollo-utilities';
 import config from '../../config'
 
-const link = {
-  link: new HttpLink({
-    uri: config.graphqlServer.url
-  })
-}
+export default withData(() => {
+  const httpLink = new HttpLink({
+    uri: config.graphqlServer.queryUrl
+  });
 
-export default withData(link)
+  return {
+    link: process.browser
+      ? split(
+        ({query}) => {
+          const {kind, operation} = getMainDefinition(query);
+
+          return 'OperationDefinition' === kind && 'subscription' === operation;
+        },
+        
+        new WebSocketLink({
+          uri: config.graphqlServer.subscriptionUrl,
+          options: {reconnect: true}
+        }),
+        httpLink
+      )
+      : httpLink
+  };
+});

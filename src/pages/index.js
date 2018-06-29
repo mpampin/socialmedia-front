@@ -17,7 +17,6 @@ class Index extends Component {
   }
 
   changeInterest(interest) {
-    console.log(interest);
     this.setState({ interest });
   }
 
