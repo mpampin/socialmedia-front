@@ -1,7 +1,7 @@
 module.exports = {
     port: process.env.PORT || 3000,
     graphqlServer: {
-        queryUrl: process.env.GRAPHQL_QUERY || "http://localhost:4000/graphql",
-        subscriptionUrl: process.env.GRAPHQL_SUBSCRIPTION || "ws://localhost:4000/subscriptions"
+        queryUrl: process.env.GRAPHQL_QUERY || "https://socialmedia-graphql.herokuapp.com/graphql",
+        subscriptionUrl: process.env.GRAPHQL_SUBSCRIPTION || "ws://socialmedia-graphql.herokuapp.com/subscriptions"
     }
 }
