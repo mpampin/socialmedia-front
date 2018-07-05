@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "next build src",
     "dev": "cross-env NODE_ENV=development node server.js",
-    "prod": "cross-env NODE_ENV=production node server.js"
+    "prod": "cross-env NODE_ENV=production node server.js",
+    "start": "npm run build && npm run prod"
   },
   "keywords": [],
   "author": "",
